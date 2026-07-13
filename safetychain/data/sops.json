@@ -1,0 +1,42 @@
+{
+  "sops": [
+    {
+      "sop_id": "SOP-014",
+      "zone_id": "zone-a",
+      "alert_type": "vehicle_breakin",
+      "title": "SOP-014: Vehicle Theft/Break-in Response",
+      "procedure": "1. DO NOT approach the suspect directly.\n2. Alert security patrol at ext. 2200 immediately.\n3. If suspect is armed or aggressive, call 911.\n4. Monitor via camera — maintain visual contact.\n5. Note: vehicle description, suspect description, direction of travel.\n6. Preserve the scene for law enforcement.\n7. File incident report within 1 hour of resolution.",
+      "contacts": {
+        "security_patrol": "ext. 2200",
+        "police_non_emergency": "555-0100",
+        "police_emergency": "911",
+        "facility_manager": "ext. 1100"
+      }
+    },
+    {
+      "sop_id": "SOP-021",
+      "zone_id": "zone-b",
+      "alert_type": "school_intrusion",
+      "title": "SOP-021: School Perimeter Breach Response",
+      "procedure": "1. DISPATCH SECURITY IMMEDIATELY — do not delay.\n2. Initiate building lockdown protocol.\n3. Call 911 — report unauthorized person at school perimeter.\n4. Notify school administration (principal + vice principal).\n5. Alert all teachers via PA system to lock classroom doors.\n6. Monitor suspect via camera — do NOT lose visual.\n7. Wait for law enforcement arrival.\n8. Do NOT attempt to apprehend the suspect.\n9. Document everything for post-incident review.",
+      "contacts": {
+        "security_dispatch": "ext. 3300",
+        "police_emergency": "911",
+        "school_principal": "ext. 4001",
+        "vice_principal": "ext. 4002",
+        "district_security": "555-0200"
+      }
+    },
+    {
+      "sop_id": "SOP-005",
+      "zone_id": "zone-a",
+      "alert_type": "loitering",
+      "title": "SOP-005: After-Hours Loitering Response",
+      "procedure": "1. Observe for 2 minutes to confirm loitering (not just passing through).\n2. If confirmed, alert security patrol at ext. 2200.\n3. Patrol should approach and ask for identification.\n4. If person has valid badge/reason, log as false positive.\n5. If person refuses to identify or becomes hostile, call 911.\n6. File report with time, description, and camera footage reference.",
+      "contacts": {
+        "security_patrol": "ext. 2200",
+        "facility_manager": "ext. 1100"
+      }
+    }
+  ]
+}
