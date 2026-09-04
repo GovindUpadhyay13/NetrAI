@@ -687,8 +687,8 @@ async def stream_pipeline_job(job_id: str):
         runner, reid_matcher = get_pipeline_components()
 
         # Step 1: AnomalyCLIP Vision Scoring
-        yield f"data: {json.dumps({'stage': 'anomaly_clip_start', 'title': 'AnomalyCLIP Vision Processing', 'status': 'AnomalyCLIP is evaluating video frames against semantic anomaly concepts...', 'percent': 22})}\n\n"
-        await asyncio.sleep(0.5)
+        yield f"data: {json.dumps({'stage': 'anomaly_clip_start', 'title': 'AnomalyCLIP Vision Processing', 'status': 'AnomalyCLIP is evaluating video frames against semantic anomaly concepts...', 'percent': 25})}\n\n"
+        await asyncio.sleep(0.3)
 
         from ingestion.video_reader import VideoReader
         with VideoReader(video_path) as reader:
@@ -696,36 +696,64 @@ async def stream_pipeline_job(job_id: str):
 
         anomaly_res = await loop.run_in_executor(
             None,
-            lambda: runner.anomaly_scorer.score_video(video_path, threshold=0.15, target_fps=5.0)
+            lambda: runner.anomaly_scorer.score_video(video_path, threshold=0.10, target_fps=5.0)
         )
         flagged_windows = anomaly_res.get("flagged_windows", [])
-        peak_score = max(anomaly_res.get("scores", [0.0])) if anomaly_res.get("scores") else 0.88
-        anomaly_type = flagged_windows[0]["anomaly_type"] if flagged_windows else "Distress / Threat Sequence"
+        scores = anomaly_res.get("scores", [])
+        peak_score = max(scores) if scores else 0.0
 
-        yield f"data: {json.dumps({'stage': 'anomaly_clip_done', 'title': 'AnomalyCLIP Anomaly Flagged', 'anomaly_type': anomaly_type, 'anomaly_score': round(peak_score, 4), 'status': f'Peak anomaly detected: {round(peak_score * 100, 1)}% ({anomaly_type})', 'percent': 35})}\n\n"
-        await asyncio.sleep(0.5)
+        # Select the actual anomalous frames to build the 3x3 grid!
+        if flagged_windows:
+            win = flagged_windows[0]
+            anomaly_type = win.get("anomaly_type", "Suspicious Activity")
+            peak_score = win.get("peak_score", peak_score)
+            sf = win.get("start_frame", 0)
+            ef = win.get("end_frame", len(frames) - 1)
+            anom_frames = frames[sf : ef + 1] if ef >= sf else frames
+            anom_timestamps = timestamps[sf : ef + 1] if ef >= sf else timestamps
+        elif scores and len(scores) == len(frames):
+            peak_idx = int(np.argmax(scores))
+            window_half = max(5, len(frames) // 8)
+            sf = max(0, peak_idx - window_half)
+            ef = min(len(frames) - 1, peak_idx + window_half)
+            anom_frames = frames[sf : ef + 1]
+            anom_timestamps = timestamps[sf : ef + 1]
+            anomaly_type = "Anomaly Peak Flagged"
+        else:
+            anom_frames = frames
+            anom_timestamps = timestamps
+            anomaly_type = "Activity Detected"
 
-        # Step 2: 3x3 Grid of Anomalous Frames
+        if not anom_frames:
+            anom_frames = frames
+            anom_timestamps = timestamps
+
+        yield f"data: {json.dumps({'stage': 'anomaly_clip_done', 'title': 'AnomalyCLIP Anomaly Flagged', 'anomaly_type': anomaly_type, 'anomaly_score': round(peak_score, 4), 'status': f'Peak anomaly detected: {round(peak_score * 100, 1)}% ({anomaly_type})', 'percent': 45})}\n\n"
+        await asyncio.sleep(0.4)
+
+        # Step 2: 3x3 Grid of Anomalous Frames (BUILT FROM ACTUAL ANOMALOUS FRAMES)
         pipeline_dir = os.path.join(BASE_DIR, "outputs", "pipeline")
         os.makedirs(pipeline_dir, exist_ok=True)
         grid_out_path = os.path.join(pipeline_dir, f"{inc_id}_grid_3x3.png")
 
         await loop.run_in_executor(
             None,
-            lambda: runner.grid_builder.build_grid_from_frames(frames, timestamps, output_path=grid_out_path)
+            lambda: runner.grid_builder.build_grid_from_frames(anom_frames, anom_timestamps, output_path=grid_out_path)
         )
         grid_url = f"/outputs/pipeline/{inc_id}_grid_3x3.png"
 
-        yield f"data: {json.dumps({'stage': 'grid_3x3', 'title': '3x3 Grid of Anomalous Frames Extracted', 'grid_url': grid_url, 'frames_count': 9, 'status': 'Generated 3x3 composite temporal sequence for multimodal AI reasoner.', 'percent': 50})}\n\n"
-        await asyncio.sleep(0.6)
+        start_t = round(anom_timestamps[0], 1) if anom_timestamps else 0.0
+        end_t = round(anom_timestamps[-1], 1) if anom_timestamps else 4.0
+        yield f"data: {json.dumps({'stage': 'grid_3x3', 'title': '3x3 Grid of Anomalous Frames Extracted', 'grid_url': grid_url, 'frames_count': 9, 'status': f'Extracted 9 anomalous frames ({start_t}s - {end_t}s) from video.', 'percent': 65})}\n\n"
+        await asyncio.sleep(0.5)
 
         # Step 3: MediaPipe Gesture & Gemini 2.5 Flash Reasoning
-        yield f"data: {json.dumps({'stage': 'gemini_processing', 'title': 'Gemini 2.5 Flash Multimodal Reasoning', 'status': 'Gemini 2.5 Flash is inspecting visual tokens, posture dynamics, and crisis context...', 'percent': 65})}\n\n"
-        await asyncio.sleep(0.5)
+        yield f"data: {json.dumps({'stage': 'gemini_processing', 'title': 'Gemini 2.5 Flash Multimodal Reasoning', 'status': 'Gemini 2.5 Flash is inspecting visual tokens, posture dynamics, and crisis context...', 'percent': 78})}\n\n"
+        await asyncio.sleep(0.4)
 
         from detection.gesture.pose_extractor import PoseExtractor
         with PoseExtractor() as extractor:
-            pose_frames = extractor.process_video_frames(frames, timestamps)
+            pose_frames = extractor.process_video_frames(anom_frames, anom_timestamps)
         gesture_res = runner.distress_classifier.classify_clip(pose_frames)
 
         vlm_report = await loop.run_in_executor(
@@ -733,8 +761,8 @@ async def stream_pipeline_job(job_id: str):
             lambda: runner.vlm_analyzer.analyze_incident(
                 grid_image=grid_out_path,
                 camera_id=camera_id,
-                start_sec=0.0,
-                end_sec=float(timestamps[-1]) if timestamps else 4.0,
+                start_sec=float(anom_timestamps[0]) if anom_timestamps else 0.0,
+                end_sec=float(anom_timestamps[-1]) if anom_timestamps else 4.0,
                 anomaly_type_prior=anomaly_type,
                 anomaly_score=peak_score,
                 distress_gesture_flag=gesture_res.is_distress,
@@ -743,8 +771,8 @@ async def stream_pipeline_job(job_id: str):
             )
         )
 
-        yield f"data: {json.dumps({'stage': 'gemini_done', 'title': 'Gemini VLM Analysis Complete', 'description': vlm_report.incident_description, 'severity': vlm_report.severity, 'distress_gesture': gesture_res.is_distress, 'recommended_department': vlm_report.recommended_department, 'status': f'Gemini VLM assessment: {vlm_report.severity.upper()} severity.', 'percent': 75})}\n\n"
-        await asyncio.sleep(0.5)
+        yield f"data: {json.dumps({'stage': 'gemini_done', 'title': 'Gemini VLM Analysis Complete', 'description': vlm_report.incident_description, 'severity': vlm_report.severity, 'distress_gesture': gesture_res.is_distress, 'recommended_department': vlm_report.recommended_department, 'status': f'Gemini VLM assessment: {vlm_report.severity.upper()} severity.', 'percent': 86})}\n\n"
+        await asyncio.sleep(0.4)
 
         # Step 4: Relevant Departments Identified
         departments = [
@@ -755,8 +783,8 @@ async def stream_pipeline_job(job_id: str):
         if "fire" in vlm_report.recommended_department.lower():
             departments.append({"name": "Delhi Fire & Rescue Services", "role": "Emergency Extraction", "priority": "Priority 1"})
 
-        yield f"data: {json.dumps({'stage': 'departments_identified', 'title': 'Emergency Departments Identified', 'departments': departments, 'status': f'Matched {len(departments)} relevant tactical departments for incident dispatch.', 'percent': 83})}\n\n"
-        await asyncio.sleep(0.5)
+        yield f"data: {json.dumps({'stage': 'departments_identified', 'title': 'Emergency Departments Identified', 'departments': departments, 'status': f'Matched {len(departments)} relevant tactical departments for incident dispatch.', 'percent': 92})}\n\n"
+        await asyncio.sleep(0.4)
 
         # Step 5: Departments Called & Dispatched
         now_time = datetime.now().strftime("%H:%M:%S")
@@ -765,40 +793,11 @@ async def stream_pipeline_job(job_id: str):
             {"name": "Women Safety Escort Unit", "unit": "Veera South-4", "status": "Dispatched", "time": now_time, "eta": "2.0 min"},
             {"name": "CATS Emergency Ambulance", "unit": "Medic-08 (AIIMS)", "status": "In Progress", "time": now_time, "eta": "3.5 min"}
         ]
-        yield f"data: {json.dumps({'stage': 'departments_called', 'title': 'Department Dispatch Signals Broadcasted', 'dispatched_units': dispatched_units, 'status': 'CAD Emergency signals and patrol dispatch orders broadcasted to field units.', 'percent': 89})}\n\n"
-        await asyncio.sleep(0.6)
+        yield f"data: {json.dumps({'stage': 'departments_called', 'title': 'Department Dispatch Signals Broadcasted', 'dispatched_units': dispatched_units, 'status': 'CAD Emergency signals and patrol dispatch orders broadcasted to field units.', 'percent': 97})}\n\n"
+        await asyncio.sleep(0.5)
 
-        # Step 6: YOLOv8 / Qdrant Re-ID Processing
-        yield f"data: {json.dumps({'stage': 'reid_processing', 'title': 'Cross-Camera Re-ID Subject Tracking', 'status': 'YOLOv8 extracting suspect bounding box; generating 512-dim CLIP embeddings for Qdrant gallery...', 'percent': 93})}\n\n"
-
-        try:
-            reid_matcher.index_incident_subject(incident_id=inc_id, camera_id=camera_id, frames_bgr=frames)
-
-            crop_path = os.path.join(pipeline_dir, f"{inc_id}_crop.jpg")
-            crop_url = None
-            for frame in frames[::max(1, len(frames) // 5)]:
-                crops_info = reid_matcher.embedder.detect_and_crop(frame)
-                if crops_info:
-                    crops_info[0][0].save(crop_path)
-                    crop_url = f"/outputs/pipeline/{inc_id}_crop.jpg"
-                    break
-
-            secondary_cam = "CAM-SD-08 (Deer Park Lake Trail)"
-            matches = reid_matcher.scan_camera_feed_for_matches(camera_id="CAM-SD-08", frame_bgr=frames[len(frames) // 2])
-            if matches and isinstance(matches[0], dict) and "score" in matches[0]:
-                sim_str = f"{matches[0]['score'] * 100:.1f}%"
-            else:
-                sim_str = "99.8%"
-
-            yield f"data: {json.dumps({'stage': 'reid_match', 'title': 'Target Sighted on Secondary Camera', 'sighting_camera': secondary_cam, 'similarity': sim_str, 'crop_url': crop_url, 'status': f'Cross-camera Re-ID match confirmed on {secondary_cam} with {sim_str} similarity.', 'percent': 97})}\n\n"
-            await asyncio.sleep(0.5)
-
-        except Exception as e:
-            print(f"[Re-ID Warning] {e}")
-            yield f"data: {json.dumps({'stage': 'reid_match', 'title': 'Cross-Camera Tracking Fallback', 'sighting_camera': 'CAM-SD-08 (Deer Park)', 'similarity': '99.8%', 'status': 'Cross-camera sighting logged.', 'percent': 97})}\n\n"
-
-        # Step 7: Final Output & Trace Persistence
-        yield f"data: {json.dumps({'stage': 'final_output', 'title': 'Incident Lifecycle Recorded', 'incident_id': inc_id, 'camera_id': camera_id, 'severity': vlm_report.severity, 'summary': f'Incident {inc_id[:8]} successfully analyzed, routed, and traced across all models.', 'percent': 100})}\n\n"
+        # Step 6: Final Output & Trace Persistence
+        yield f"data: {json.dumps({'stage': 'final_output', 'title': 'Incident Lifecycle Recorded', 'incident_id': inc_id, 'camera_id': camera_id, 'severity': vlm_report.severity, 'summary': f'Incident {inc_id[:8]} successfully analyzed, routed, and recorded.', 'percent': 100})}\n\n"
         yield "data: [DONE]\n\n"
 
     return StreamingResponse(sse_event_generator(), media_type="text/event-stream")
