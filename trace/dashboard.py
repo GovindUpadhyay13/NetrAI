@@ -606,6 +606,21 @@ def get_police_dashboard():
     return HTMLResponse("<h1>Police Dashboard Not Found</h1>", status_code=404)
 
 
+@app.get("/style.css")
+def get_style():
+    return FileResponse(os.path.join(DASHBOARD_DIR, "style.css"))
+
+
+@app.get("/app.js")
+def get_app_js():
+    return FileResponse(os.path.join(DASHBOARD_DIR, "app.js"))
+
+
+@app.get("/delhi_cams.json")
+def get_delhi_cams():
+    return FileResponse(os.path.join(DASHBOARD_DIR, "delhi_cams.json"))
+
+
 @app.get("/api/traces")
 def api_traces(limit: int = Query(50, ge=1, le=200)):
     return JSONResponse(content=get_recent_events(limit=limit))
