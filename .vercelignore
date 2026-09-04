@@ -1,0 +1,15 @@
+# Ignore Python backend files on Vercel so it deploys as a high-speed static web app
+main.py
+requirements.txt
+bus/
+detection/
+ingestion/
+reasoning/
+reid/
+trace/
+tests/
+*.py
+external/
+outputs/
+checkpoints/
+trace.db
