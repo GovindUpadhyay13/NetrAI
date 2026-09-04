@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetrAI | Surveillance Pipeline Studio & Ingestion Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #0b0f17;
+            --bg-card: #121824;
+            --bg-card-hover: #182234;
+            --border-color: #232f46;
+            --text-main: #f1f5f9;
+            --text-muted: #8899ac;
+            --accent-blue: #2563eb;
+            --accent-cyan: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --badge-purple: #8b5cf6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 24px 32px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .live-tag {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .live-tag::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 8px var(--success);
+        }
+
+        .btn-police-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #1e293b;
+            color: #38bdf8;
+            border: 1px solid #334155;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12.5px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .btn-police-nav:hover {
+            background: #2563eb;
+            color: #ffffff;
+            border-color: #2563eb;
+        }
+
+        /* Studio Container */
+        .studio-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+        }
+
+        .studio-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .upload-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+            background: rgba(0,0,0,0.25);
+            padding: 14px 18px;
+            border-radius: 10px;
+            border: 1px dashed var(--border-color);
+        }
+
+        input[type="file"] {
+            color: var(--text-muted);
+            font-size: 12.5px;
+        }
+
+        select, button {
+            background: #1e293b;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        select:focus, button:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        .btn-primary {
+            background: #16a34a;
+            border-color: #15803d;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-primary:hover {
+            background: #15803d;
+        }
+
+        .btn-quick-demo {
+            background: #2563eb;
+            border-color: #1d4ed8;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-quick-demo:hover {
+            background: #1d4ed8;
+        }
+
+        /* Progress & Stepper */
+        .progress-box {
+            margin-top: 14px;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 7px;
+            background: #1e293b;
+            border-radius: 999px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #2563eb, #06b6d4, #10b981);
+            transition: width 0.4s ease;
+        }
+
+        .status-banner {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-bottom: 14px;
+            min-height: 22px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .stepper {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+        @media (max-width: 900px) {
+            .stepper { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .step-pill {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            padding: 8px 6px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: all 0.3s;
+        }
+        .step-pill.active {
+            background: rgba(37, 99, 235, 0.2);
+            border-color: var(--accent-blue);
+            color: #60a5fa;
+            box-shadow: 0 0 10px rgba(37, 99, 235, 0.3);
+        }
+        .step-pill.done {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: var(--success);
+            color: #34d399;
+        }
+
+        /* Results Grid */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-top: 20px;
+        }
+        @media (max-width: 960px) {
+            .results-grid { grid-template-columns: 1fr; }
+        }
+
+        .result-box {
+            background: rgba(0, 0, 0, 0.28);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .result-box-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #94a3b8;
+        }
+
+        .grid-3x3-img {
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: #000;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .grid-3x3-img:hover {
+            transform: scale(1.01);
+        }
+
+        .vlm-report-box {
+            background: rgba(15, 23, 42, 0.6);
+            border-left: 3px solid #2563eb;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 12.5px;
+            line-height: 1.5;
+            color: #e2e8f0;
+            min-height: 80px;
+        }
+
+        .dept-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .dept-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+
+        .reid-crop-preview {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 12px;
+            border-radius: 8px;
+        }
+        .reid-crop-img {
+            width: 60px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 2px solid var(--badge-purple);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .badge-danger { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+        .badge-warning { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+        .badge-success { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+        .badge-purple { background: rgba(139, 92, 246, 0.2); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.4); }
+
+        /* Auto-launch Banner */
+        .launch-modal-banner {
+            display: none;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.25), rgba(16, 185, 129, 0.25));
+            border: 1px solid rgba(56, 189, 248, 0.5);
+            padding: 16px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: space-between;
+            animation: pulseBanner 2s infinite;
+        }
+        @keyframes pulseBanner {
+            0%, 100% { box-shadow: 0 0 15px rgba(37, 99, 235, 0.3); }
+            50% { box-shadow: 0 0 25px rgba(16, 185, 129, 0.4); }
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        @media (max-width: 800px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 16px;
+            border-radius: 10px;
+        }
+        .stat-label {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        .stat-value {
+            font-size: 26px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        /* Table */
+        .main-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            text-align: left;
+        }
+        th {
+            color: var(--text-muted);
+            font-weight: 600;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border-color);
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+        td {
+            padding: 12px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #cbd5e1;
+        }
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            <span>NetrAI Surveillance Operations & Trace Center</span>
+            <span class="live-tag">LIVE FEED</span>
+        </div>
+        <div style="display: flex; gap: 12px; align-items: center;">
+            <a href="police.html" class="btn-police-nav" id="link-police-dashboard">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                Open Delhi Police Command Center &rarr;
+            </a>
+        </div>
+    </header>
+
+    <!-- Auto-Launch Police Transition Banner -->
+    <div id="auto-launch-banner" class="launch-modal-banner">
+        <div>
+            <div style="font-weight: 800; font-size: 15px; color: #fff; display: flex; align-items: center; gap: 8px;">
+                <span>🚨 Incident Dispatched to Delhi Police CTECC</span>
+            </div>
+            <div id="banner-subtext" style="font-size: 13px; color: #93c5fd; margin-top: 4px;">
+                Pipeline processing finished. Automatically launching Delhi Police Operations Center in 3s...
+            </div>
+        </div>
+        <a href="police.html" id="btn-banner-launch" class="btn-quick-demo" style="text-decoration: none; padding: 8px 18px;">
+            Launch Police Dashboard Now &rarr;
+        </a>
+    </div>
+
+    <!-- Video Ingestion & Pipeline Studio -->
+    <div class="studio-card">
+        <div class="studio-header">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span>⚡ Real-Time Video Ingestion & Pipeline Studio</span>
+                <span class="badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">END-TO-END PIPELINE</span>
+            </div>
+            <small style="color: var(--text-muted); font-size: 11px;">Dual-Mode: Local Backend & Cloud Demo</small>
+        </div>
+
+        <div class="upload-row">
+            <input type="file" id="video-file-input" accept="video/mp4,video/avi,video/quicktime" />
+            
+            <select id="camera-select">
+                <option value="CAM-SD-01">CAM-SD-01 &bull; Hauz Khas Village (Origin)</option>
+                <option value="CAM-SD-08">CAM-SD-08 &bull; Deer Park Lake Trail</option>
+                <option value="CAM-SD-04">CAM-SD-04 &bull; Green Park North Corridor</option>
+            </select>
+
+            <button class="btn-primary" id="btn-run-upload" onclick="startPipeline(false)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                Ingest &amp; Stream Pipeline
+            </button>
+
+            <button class="btn-quick-demo" id="btn-run-demo" onclick="startPipeline(true)">
+                ⚡ Quick Test (Sample Distress Clip)
+            </button>
+        </div>
+
+        <!-- Progress & Stepper -->
+        <div id="progress-container" class="progress-box">
+            <div class="progress-bar-bg">
+                <div id="progress-bar-fill" class="progress-bar-fill"></div>
+            </div>
+
+            <div id="pipeline-status-text" class="status-banner">
+                Select a video file or click <strong>⚡ Quick Test</strong> to begin pipeline analysis.
+            </div>
+
+            <div class="stepper">
+                <div class="step-pill" id="pill-step-1"><span>1</span> AnomalyCLIP Vision</div>
+                <div class="step-pill" id="pill-step-2"><span>2</span> 3x3 Frame Grid</div>
+                <div class="step-pill" id="pill-step-3"><span>3</span> Gemini 2.5 Reasoner</div>
+                <div class="step-pill" id="pill-step-4"><span>4</span> Relevant Depts</div>
+                <div class="step-pill" id="pill-step-5"><span>5</span> Dispatched</div>
+                <div class="step-pill" id="pill-step-6"><span>6</span> Re-ID Match</div>
+                <div class="step-pill" id="pill-step-7"><span>7</span> Final Output</div>
+            </div>
+        </div>
+
+        <!-- Visualized Outputs -->
+        <div id="pipeline-results-container" class="results-grid">
+            <!-- 1. 3x3 Grid Card -->
+            <div class="result-box">
+                <div class="result-box-title">
+                    <span>1 &bull; 3X3 GRID OF ANOMALOUS FRAMES</span>
+                    <span id="badge-anomaly-score" class="badge badge-danger">Evaluating...</span>
+                </div>
+                <img id="res-grid-img" class="grid-3x3-img" src="assets/sample_grid_3x3.png" alt="3x3 Anomalous Grid" style="display: none;" onclick="window.open(this.src)" />
+                <div id="res-grid-placeholder" style="padding: 42px; text-align: center; color: var(--text-muted); font-size: 12px; background: rgba(0,0,0,0.2); border-radius: 6px;">
+                    Extracting peak anomalous frames...
+                </div>
+            </div>
+
+            <!-- 2. Gemini VLM Reasoning -->
+            <div class="result-box">
+                <div class="result-box-title">
+                    <span>2 &bull; GEMINI 2.5 FLASH MULTIMODAL REASONER</span>
+                    <span id="badge-severity" class="badge badge-warning">Waiting...</span>
+                </div>
+                <div id="res-vlm-report" class="vlm-report-box">
+                    Waiting for multimodal vision analysis...
+                </div>
+                <div style="display: flex; gap: 8px; font-size: 11.5px; color: var(--text-muted); margin-top: 4px;">
+                    <span>Distress Gesture: <strong id="res-gesture-flag" style="color:#fff;">--</strong></span>
+                </div>
+            </div>
+
+            <!-- 3. Relevant Departments & Dispatch -->
+            <div class="result-box">
+                <div class="result-box-title">
+                    <span>3 &bull; RELEVANT DEPARTMENTS &amp; DISPATCH CALLS</span>
+                    <span id="badge-dispatch-count" class="badge badge-success">3 Units</span>
+                </div>
+                <div id="res-departments-list" class="dept-list">
+                    <div class="dept-item">
+                        <span>South Delhi PCR Patrol (Echo-14)</span>
+                        <span class="badge badge-warning">Awaiting analysis</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Re-ID Cross Camera Match -->
+            <div class="result-box">
+                <div class="result-box-title">
+                    <span>4 &bull; RE-ID SUBJECT EXTRACTION &amp; CROSS-CAMERA MATCH</span>
+                    <span id="badge-reid-similarity" class="badge badge-purple">Pending</span>
+                </div>
+                <div id="res-reid-box" class="reid-crop-preview">
+                    <img id="res-reid-crop" class="reid-crop-img" src="assets/sample_reid_crop.jpg" style="display:none;" />
+                    <div>
+                        <div style="font-weight: 700; color: #fff; font-size: 13px;" id="res-reid-camera">Scanning egress nodes...</div>
+                        <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 4px;" id="res-reid-desc">YOLOv8 person detector ready.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">Active Incidents</div>
+            <div class="stat-value" id="stat-incidents">11</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Logged Stage Events</div>
+            <div class="stat-value" id="stat-events">30</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Distress Signals Flagged</div>
+            <div class="stat-value" id="stat-distress" style="color: var(--danger);">16</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Cross-Camera Matches</div>
+            <div class="stat-value" id="stat-reid" style="color: var(--badge-purple);">9</div>
+        </div>
+    </div>
+
+    <!-- Traces Table -->
+    <div class="main-card">
+        <div style="font-size: 15px; font-weight: 700; margin-bottom: 14px;">Live Per-Incident Lifecycle Traces</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Incident ID</th>
+                    <th>Camera</th>
+                    <th>Stage</th>
+                    <th>Anomaly Score</th>
+                    <th>Distress Gesture</th>
+                    <th>Severity</th>
+                    <th>VLM Reasoner Report</th>
+                </tr>
+            </thead>
+            <tbody id="trace-tbody">
+                <tr>
+                    <td>2026-09-04 10:54:57</td>
+                    <td><code>96db07dc...</code></td>
+                    <td>CAM-SD-08</td>
+                    <td><span class="badge badge-purple">reid_match</span></td>
+                    <td>0.9976</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>Subject sighted on CAM-SD-08 (Re-ID similarity: 1.00, origin: CAM-SD-01)</td>
+                </tr>
+                <tr>
+                    <td>2026-09-04 10:50:37</td>
+                    <td><code>955d1d1c...</code></td>
+                    <td>CAM-SD-01</td>
+                    <td><span class="badge badge-danger">vlm_analyzed</span></td>
+                    <td>0.1322</td>
+                    <td><span class="badge badge-danger">SOS FLAGGED</span></td>
+                    <td><span class="badge badge-danger">HIGH</span></td>
+                    <td>A female individual is rapidly approached in corridor. Sustained distress posture detected.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Adjust links for local vs static routing
+        const isStaticHtml = window.location.pathname.endsWith('.html') || window.location.protocol === 'file:';
+        const policeUrl = isStaticHtml ? 'police.html' : '/police';
+        document.getElementById('link-police-dashboard').href = policeUrl;
+        document.getElementById('btn-banner-launch').href = policeUrl;
+
+        async function startPipeline(useDemo = false) {
+            const fileInput = document.getElementById('video-file-input');
+            const cameraSelect = document.getElementById('camera-select');
+            const cameraId = cameraSelect.value;
+
+            resetPipelineUI();
+            document.getElementById('pipeline-status-text').innerText = 'Initializing video ingestion & pipeline registering...';
+
+            const formData = new FormData();
+            formData.append('camera_id', cameraId);
+
+            if (useDemo || !fileInput.files || fileInput.files.length === 0) {
+                formData.append('use_demo', 'true');
+            } else {
+                formData.append('video', fileInput.files[0]);
+                formData.append('use_demo', 'false');
+            }
+
+            try {
+                // Try backend SSE endpoint if running on Python server
+                const uploadRes = await fetch('/api/upload-video', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (uploadRes.ok) {
+                    const { job_id } = await uploadRes.json();
+                    const evtSource = new EventSource('/api/stream-job/' + job_id);
+
+                    evtSource.onmessage = function(e) {
+                        if (e.data === '[DONE]') {
+                            evtSource.close();
+                            onPipelineComplete();
+                            return;
+                        }
+                        const data = JSON.parse(e.data);
+                        handleSSEEvent(data);
+                    };
+
+                    evtSource.onerror = function() {
+                        evtSource.close();
+                        onPipelineComplete();
+                    };
+                    return;
+                }
+            } catch (err) {
+                console.log('Backend SSE unavailable, running client-side interactive pipeline stream...');
+            }
+
+            // Fallback for Vercel / Static Deployment
+            runInteractiveDemoStream(cameraId);
+        }
+
+        function handleSSEEvent(data) {
+            if (data.percent) {
+                document.getElementById('progress-bar-fill').style.width = data.percent + '%';
+            }
+            if (data.status) {
+                document.getElementById('pipeline-status-text').innerText = data.status;
+            }
+
+            if (data.stage === 'anomaly_clip_start') {
+                activatePill(1);
+            } else if (data.stage === 'anomaly_clip_done') {
+                markPillDone(1);
+                document.getElementById('badge-anomaly-score').innerText = `${Math.round(data.anomaly_score * 100)}% (${data.anomaly_type})`;
+            } else if (data.stage === 'grid_3x3') {
+                activatePill(2);
+                markPillDone(2);
+                const img = document.getElementById('res-grid-img');
+                img.src = (data.grid_url || 'assets/sample_grid_3x3.png') + '?t=' + Date.now();
+                img.style.display = 'block';
+                document.getElementById('res-grid-placeholder').style.display = 'none';
+            } else if (data.stage === 'gemini_processing') {
+                activatePill(3);
+            } else if (data.stage === 'gemini_done') {
+                markPillDone(3);
+                document.getElementById('res-vlm-report').innerText = data.description;
+                document.getElementById('badge-severity').innerText = (data.severity || 'HIGH').toUpperCase();
+                document.getElementById('badge-severity').className = 'badge ' + (data.severity === 'high' ? 'badge-danger' : 'badge-warning');
+                document.getElementById('res-gesture-flag').innerText = data.distress_gesture ? 'YES (SOS Detected)' : 'No';
+                document.getElementById('res-gesture-flag').style.color = data.distress_gesture ? '#f87171' : '#34d399';
+            } else if (data.stage === 'departments_identified') {
+                activatePill(4);
+                markPillDone(4);
+                const list = document.getElementById('res-departments-list');
+                list.innerHTML = data.departments.map(d => `
+                    <div class="dept-item">
+                        <span><strong>${d.name}</strong> &bull; <small style="color:var(--text-muted);">${d.role}</small></span>
+                        <span class="badge badge-warning">${d.priority}</span>
+                    </div>
+                `).join('');
+            } else if (data.stage === 'departments_called') {
+                activatePill(5);
+                markPillDone(5);
+                const list = document.getElementById('res-departments-list');
+                list.innerHTML = data.dispatched_units.map(u => `
+                    <div class="dept-item">
+                        <span><strong>${u.name}</strong> (${u.unit})</span>
+                        <span class="badge badge-success">DISPATCHED (${u.eta})</span>
+                    </div>
+                `).join('');
+                document.getElementById('badge-dispatch-count').innerText = `${data.dispatched_units.length} Dispatched`;
+            } else if (data.stage === 'reid_processing') {
+                activatePill(6);
+                document.getElementById('res-reid-desc').innerText = 'Extracting subject crop & indexing in Qdrant Gallery...';
+            } else if (data.stage === 'reid_match') {
+                markPillDone(6);
+                document.getElementById('badge-reid-similarity').innerText = `${data.similarity} MATCH`;
+                document.getElementById('res-reid-camera').innerText = `Sighted: ${data.sighting_camera}`;
+                document.getElementById('res-reid-desc').innerText = `Cross-camera cosine similarity: ${data.similarity}`;
+                const cropImg = document.getElementById('res-reid-crop');
+                cropImg.src = (data.crop_url || 'assets/sample_reid_crop.jpg') + '?t=' + Date.now();
+                cropImg.style.display = 'block';
+            } else if (data.stage === 'final_output') {
+                activatePill(7);
+                markPillDone(7);
+            }
+        }
+
+        // Automatic launch of Police Dashboard upon pipeline completion
+        function onPipelineComplete() {
+            markPillDone(7);
+            document.getElementById('progress-bar-fill').style.width = '100%';
+
+            // Display launch banner
+            const banner = document.getElementById('auto-launch-banner');
+            banner.style.display = 'flex';
+
+            let secondsRemaining = 3;
+            const subtext = document.getElementById('banner-subtext');
+            const statusText = document.getElementById('pipeline-status-text');
+
+            function updateText() {
+                const msg = `Pipeline processing completed! Incident dispatched to CTECC. Automatically launching Delhi Police Operations Center in ${secondsRemaining}s...`;
+                subtext.innerText = msg;
+                statusText.innerHTML = `✅ <strong>${msg}</strong>`;
+            }
+
+            updateText();
+
+            const countdownInterval = setInterval(() => {
+                secondsRemaining--;
+                if (secondsRemaining > 0) {
+                    updateText();
+                } else {
+                    clearInterval(countdownInterval);
+                    window.location.href = policeUrl;
+                }
+            }, 1000);
+        }
+
+        // Interactive Cloud Stream Simulation (For Vercel)
+        async function runInteractiveDemoStream(cameraId) {
+            const steps = [
+                {
+                    delay: 700,
+                    event: { stage: 'init', percent: 15, status: `Video registered: demo_incident.mp4 | Camera: ${cameraId}` }
+                },
+                {
+                    delay: 1100,
+                    event: { stage: 'anomaly_clip_start', percent: 28, status: 'AnomalyCLIP is evaluating video frames against semantic anomaly concepts...' }
+                },
+                {
+                    delay: 1300,
+                    event: { stage: 'anomaly_clip_done', anomaly_score: 0.1322, anomaly_type: 'Distress / Threat Sequence', percent: 42, status: 'Peak anomaly detected: 13.2% (Distress / Threat Sequence)' }
+                },
+                {
+                    delay: 900,
+                    event: { stage: 'grid_3x3', grid_url: 'assets/sample_grid_3x3.png', percent: 55, status: 'Generated 3x3 composite temporal sequence for multimodal AI reasoner.' }
+                },
+                {
+                    delay: 1100,
+                    event: { stage: 'gemini_processing', percent: 68, status: 'Gemini 2.5 Flash is inspecting visual tokens, posture dynamics, and crisis context...' }
+                },
+                {
+                    delay: 1400,
+                    event: {
+                        stage: 'gemini_done',
+                        severity: 'high',
+                        distress_gesture: true,
+                        description: 'A female individual is rapidly approached in corridor. Woman raises her left arm above head performing gesture consistent with distress / SOS signal. Aggressor maintains close proximity.',
+                        percent: 78,
+                        status: 'Gemini VLM assessment: HIGH severity.'
+                    }
+                },
+                {
+                    delay: 800,
+                    event: {
+                        stage: 'departments_identified',
+                        percent: 85,
+                        status: 'Matched 3 relevant tactical departments for incident dispatch.',
+                        departments: [
+                            { name: 'South Delhi PCR Patrol Vans', role: 'Immediate Intercept & Cordon', priority: 'Priority 1' },
+                            { name: 'Women Safety Escort Unit (Veera Team)', role: 'On-scene Victim Support & Escort', priority: 'Priority 1' },
+                            { name: 'CATS Emergency Ambulance (AIIMS)', role: 'Medical Standby & First Aid', priority: 'Priority 2' }
+                        ]
+                    }
+                },
+                {
+                    delay: 900,
+                    event: {
+                        stage: 'departments_called',
+                        percent: 92,
+                        status: 'CAD Emergency signals and patrol dispatch orders broadcasted to field units.',
+                        dispatched_units: [
+                            { name: 'South Delhi PCR Patrol', unit: 'Echo-14', status: 'Dispatched', eta: '1.5 min' },
+                            { name: 'Women Safety Escort Unit', unit: 'Veera South-4', status: 'Dispatched', eta: '2.0 min' },
+                            { name: 'CATS Emergency Ambulance', unit: 'Medic-08 (AIIMS)', status: 'In Progress', eta: '3.5 min' }
+                        ]
+                    }
+                },
+                {
+                    delay: 900,
+                    event: {
+                        stage: 'reid_processing',
+                        percent: 96,
+                        status: 'YOLOv8 extracting suspect bounding box; generating 512-dim CLIP embeddings for Qdrant gallery...'
+                    }
+                },
+                {
+                    delay: 1100,
+                    event: {
+                        stage: 'reid_match',
+                        percent: 98,
+                        sighting_camera: 'CAM-SD-08 (Deer Park Lake Trail)',
+                        similarity: '99.8%',
+                        crop_url: 'assets/sample_reid_crop.jpg',
+                        status: 'Cross-camera Re-ID match confirmed on CAM-SD-08 (Deer Park Lake Trail) with 99.8% similarity.'
+                    }
+                },
+                {
+                    delay: 600,
+                    event: { stage: 'final_output', percent: 100, status: 'Incident Lifecycle Recorded.' }
+                }
+            ];
+
+            for (const item of steps) {
+                await new Promise(r => setTimeout(r, item.delay));
+                handleSSEEvent(item.event);
+            }
+
+            onPipelineComplete();
+        }
+
+        function activatePill(step) {
+            const pill = document.getElementById(`pill-step-${step}`);
+            if (pill) pill.classList.add('active');
+        }
+
+        function markPillDone(step) {
+            const pill = document.getElementById(`pill-step-${step}`);
+            if (pill) {
+                pill.classList.remove('active');
+                pill.classList.add('done');
+            }
+        }
+
+        function resetPipelineUI() {
+            document.getElementById('auto-launch-banner').style.display = 'none';
+            document.getElementById('progress-bar-fill').style.width = '0%';
+            for (let i = 1; i <= 7; i++) {
+                const pill = document.getElementById(`pill-step-${i}`);
+                if (pill) pill.className = 'step-pill';
+            }
+            document.getElementById('res-grid-img').style.display = 'none';
+            document.getElementById('res-grid-placeholder').style.display = 'block';
+            document.getElementById('badge-anomaly-score').innerText = 'Evaluating...';
+            document.getElementById('badge-severity').innerText = 'Waiting...';
+            document.getElementById('res-vlm-report').innerText = 'Waiting for multimodal vision analysis...';
+            document.getElementById('res-reid-crop').style.display = 'none';
+            document.getElementById('badge-reid-similarity').innerText = 'Pending';
+        }
+    </script>
+</body>
+</html>

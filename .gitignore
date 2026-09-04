@@ -1,0 +1,21 @@
+# Environment & secrets
+.env
+__pycache__/
+*.pyc
+
+# Weights & Models
+checkpoints/
+*.ckpt
+*.pt
+yolov8n.pt
+
+# Output artifacts & DB
+outputs/
+*.mp4
+*.png
+!dashboard/assets/*.png
+!public/assets/*.png
+trace.db
+
+# Cloned upstream submodules
+external/

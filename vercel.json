@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/police", "destination": "/police.html" },
+    { "source": "/traces", "destination": "/index.html" },
+    { "source": "/backend", "destination": "/index.html" },
+    { "source": "/dashboard/(.*)", "destination": "/$1" }
+  ]
+}
