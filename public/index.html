@@ -202,12 +202,12 @@
 
         .stepper {
             display: grid;
-            grid-template-columns: repeat(6, 1fr);
+            grid-template-columns: repeat(7, 1fr);
             gap: 8px;
             margin-top: 10px;
         }
-        @media (max-width: 800px) {
-            .stepper { grid-template-columns: repeat(3, 1fr); }
+        @media (max-width: 900px) {
+            .stepper { grid-template-columns: repeat(2, 1fr); }
         }
 
         .step-pill {
@@ -236,11 +236,11 @@
         /* Results Grid */
         .results-grid {
             display: grid;
-            grid-template-columns: 1.2fr 1fr 1fr;
+            grid-template-columns: repeat(2, 1fr);
             gap: 16px;
             margin-top: 20px;
         }
-        @media (max-width: 1080px) {
+        @media (max-width: 960px) {
             .results-grid { grid-template-columns: 1fr; }
         }
 
@@ -302,6 +302,22 @@
             font-size: 12px;
         }
 
+        .reid-crop-preview {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 12px;
+            border-radius: 8px;
+        }
+        .reid-crop-img {
+            width: 70px;
+            height: 95px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 2px solid var(--badge-purple);
+        }
+
         .badge {
             display: inline-block;
             padding: 2px 8px;
@@ -335,12 +351,12 @@
         /* Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 16px;
             margin-bottom: 24px;
         }
         @media (max-width: 800px) {
-            .stats-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
         }
 
         .stat-card {
@@ -402,7 +418,7 @@
     <header class="header">
         <div class="header-title">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-            <span>NetrAI Surveillance Operations & Trace Center</span>
+            <span>NetrAI Surveillance Operations &amp; Trace Center</span>
             <span class="live-tag">LIVE FEED</span>
         </div>
         <div style="display: flex; gap: 12px; align-items: center;">
@@ -420,7 +436,7 @@
                 <span>🚨 Incident Dispatched to Delhi Police CTECC</span>
             </div>
             <div id="banner-subtext" style="font-size: 13px; color: #93c5fd; margin-top: 4px;">
-                Backend pipeline processing finished. Automatically launching Delhi Police Operations Center in 3s...
+                Pipeline processing finished. Automatically launching Delhi Police Operations Center in 3s...
             </div>
         </div>
         <a href="police.html" id="btn-banner-launch" class="btn-quick-demo" style="text-decoration: none; padding: 8px 18px;">
@@ -432,10 +448,10 @@
     <div class="studio-card">
         <div class="studio-header">
             <div style="display: flex; align-items: center; gap: 8px;">
-                <span>⚡ Real-Time Video Ingestion &amp; Live Backend Processing</span>
-                <span class="badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">BACKEND INTEGRATED</span>
+                <span>⚡ Real-Time Video Ingestion &amp; Pipeline Studio</span>
+                <span class="badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">BACKEND LIVE PIPELINE</span>
             </div>
-            <small style="color: var(--text-muted); font-size: 11px;">Processes Any Uploaded Video via AnomalyCLIP + Gemini VLM</small>
+            <small style="color: var(--text-muted); font-size: 11px;">AnomalyCLIP &bull; 3x3 Grid &bull; Gemini 2.5 Flash &bull; CAD Dispatch &bull; YOLOv8 Re-ID</small>
         </div>
 
         <div class="upload-row">
@@ -449,11 +465,11 @@
 
             <button class="btn-primary" id="btn-run-upload" onclick="startPipeline(false)">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                Upload &amp; Process Video
+                Ingest &amp; Stream Pipeline
             </button>
 
             <button class="btn-quick-demo" id="btn-run-demo" onclick="startPipeline(true)">
-                ⚡ Quick Test (Real Surveillance Clip)
+                ⚡ Quick Test (Sample Distress Clip)
             </button>
         </div>
 
@@ -464,7 +480,7 @@
             </div>
 
             <div id="pipeline-status-text" class="status-banner">
-                Select any video file or click <strong>⚡ Quick Test</strong> to let the backend process the actual clip.
+                Select a video file or click <strong>⚡ Quick Test</strong> to begin pipeline analysis.
             </div>
 
             <div class="stepper">
@@ -473,7 +489,8 @@
                 <div class="step-pill" id="pill-step-3"><span>3</span> Gemini 2.5 Reasoner</div>
                 <div class="step-pill" id="pill-step-4"><span>4</span> Relevant Depts</div>
                 <div class="step-pill" id="pill-step-5"><span>5</span> Dispatched</div>
-                <div class="step-pill" id="pill-step-6"><span>6</span> Final Output</div>
+                <div class="step-pill" id="pill-step-6"><span>6</span> Re-ID Match</div>
+                <div class="step-pill" id="pill-step-7"><span>7</span> Final Output</div>
             </div>
         </div>
 
@@ -487,7 +504,7 @@
                 </div>
                 <img id="res-grid-img" class="grid-3x3-img" src="" alt="3x3 Anomalous Grid" style="display: none;" onclick="window.open(this.src)" />
                 <div id="res-grid-placeholder" style="padding: 42px; text-align: center; color: var(--text-muted); font-size: 12px; background: rgba(0,0,0,0.2); border-radius: 6px;">
-                    Extracting actual anomalous frames from video...
+                    Extracting peak anomalous frames from backend pipeline...
                 </div>
             </div>
 
@@ -509,12 +526,27 @@
             <div class="result-box">
                 <div class="result-box-title">
                     <span>3 &bull; RELEVANT DEPARTMENTS &amp; DISPATCH CALLS</span>
-                    <span id="badge-dispatch-count" class="badge badge-success">Standby</span>
+                    <span id="badge-dispatch-count" class="badge badge-success">Pending</span>
                 </div>
                 <div id="res-departments-list" class="dept-list">
                     <div class="dept-item">
-                        <span>Emergency Intercept Units</span>
+                        <span>Emergency Dispatch Units</span>
                         <span class="badge badge-warning">Awaiting analysis</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Re-ID Cross Camera Match -->
+            <div class="result-box">
+                <div class="result-box-title">
+                    <span>4 &bull; RE-ID SUBJECT EXTRACTION &amp; CROSS-CAMERA MATCH</span>
+                    <span id="badge-reid-similarity" class="badge badge-purple">Pending</span>
+                </div>
+                <div id="res-reid-box" class="reid-crop-preview">
+                    <img id="res-reid-crop" class="reid-crop-img" src="" style="display:none;" />
+                    <div>
+                        <div style="font-weight: 700; color: #fff; font-size: 13px;" id="res-reid-camera">Scanning egress nodes...</div>
+                        <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 4px;" id="res-reid-desc">YOLOv8 person detector ready.</div>
                     </div>
                 </div>
             </div>
@@ -534,6 +566,10 @@
         <div class="stat-card">
             <div class="stat-label">Distress Signals Flagged</div>
             <div class="stat-value" id="stat-distress" style="color: var(--danger);">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Cross-Camera Matches</div>
+            <div class="stat-value" id="stat-reid" style="color: var(--badge-purple);">0</div>
         </div>
     </div>
 
@@ -567,36 +603,43 @@
 
         async function fetchTraces() {
             try {
-                const res = await fetch('/api/traces?limit=15');
+                const res = await fetch('/api/traces?limit=30');
                 if (!res.ok) return;
                 const traces = await res.json();
                 
                 const incRes = await fetch('/api/incidents');
                 const incidents = incRes.ok ? await incRes.json() : [];
-
+                
                 document.getElementById('stat-incidents').innerText = incidents.length;
                 document.getElementById('stat-events').innerText = traces.length;
                 document.getElementById('stat-distress').innerText = traces.filter(t => t.distress_gesture).length;
+                document.getElementById('stat-reid').innerText = traces.filter(t => t.stage === 'reid_match').length;
 
                 const tbody = document.getElementById('trace-tbody');
-                if (traces.length === 0) return;
+                if (traces.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-muted);">No trace records yet. Process a video above!</td></tr>';
+                    return;
+                }
 
                 tbody.innerHTML = traces.map(t => `
                     <tr>
-                        <td>${t.timestamp}</td>
-                        <td><code>${t.incident_id.slice(0,8)}...</code></td>
+                        <td>${t.timestamp ? t.timestamp.split('.')[0].replace('T', ' ') : '-'}</td>
+                        <td><code>${t.incident_id ? t.incident_id.slice(0,8) : ''}...</code></td>
                         <td>${t.camera_id}</td>
-                        <td><span class="badge badge-stage">${t.stage}</span></td>
-                        <td>${t.anomaly_score > 0 ? t.anomaly_score : '-'}</td>
+                        <td><span class="badge badge-purple">${t.stage}</span></td>
+                        <td>${t.anomaly_score > 0 ? Number(t.anomaly_score).toFixed(4) : '-'}</td>
                         <td>${t.distress_gesture ? '<span class="badge badge-danger">SOS FLAGGED</span>' : '-'}</td>
                         <td>${t.severity ? `<span class="badge ${t.severity === 'high' ? 'badge-danger' : 'badge-warning'}">${t.severity.toUpperCase()}</span>` : '-'}</td>
                         <td>${t.vlm_report ? t.vlm_report.slice(0, 80) + '...' : '-'}</td>
                     </tr>
                 `).join('');
             } catch (e) {
-                // Ignore silent poll errors
+                console.error(e);
             }
         }
+
+        setInterval(fetchTraces, 3000);
+        fetchTraces();
 
         async function startPipeline(useDemo = false) {
             const fileInput = document.getElementById('video-file-input');
@@ -604,7 +647,7 @@
             const cameraId = cameraSelect.value;
 
             resetPipelineUI();
-            document.getElementById('pipeline-status-text').innerText = 'Uploading video & registering pipeline job...';
+            document.getElementById('pipeline-status-text').innerText = 'Uploading video & initializing backend pipeline...';
 
             const formData = new FormData();
             formData.append('camera_id', cameraId);
@@ -624,37 +667,32 @@
 
                 if (!uploadRes.ok) {
                     const errText = await uploadRes.text();
-                    document.getElementById('pipeline-status-text').innerHTML = `<span style="color:#ef4444;">Upload error: ${errText}</span>`;
+                    document.getElementById('pipeline-status-text').innerHTML = `<span style="color:var(--danger);">Upload failed: ${errText}</span>`;
                     return;
                 }
 
                 const { job_id } = await uploadRes.json();
-                document.getElementById('pipeline-status-text').innerText = 'Video uploaded successfully. Starting real-time AnomalyCLIP analysis...';
-
-                // Open Live SSE Stream
                 const evtSource = new EventSource('/api/stream-job/' + job_id);
 
                 evtSource.onmessage = function(e) {
                     if (e.data === '[DONE]') {
                         evtSource.close();
                         onPipelineComplete();
-                        fetchTraces();
                         return;
                     }
-
                     const data = JSON.parse(e.data);
                     handleSSEEvent(data);
                 };
 
                 evtSource.onerror = function(err) {
-                    console.error('SSE connection error', err);
                     evtSource.close();
+                    console.error('SSE Stream error', err);
                     onPipelineComplete();
                 };
 
             } catch (err) {
-                console.error('Pipeline error', err);
-                document.getElementById('pipeline-status-text').innerHTML = `<span style="color:#ef4444;">Error connecting to backend: ${err.message}</span>`;
+                console.error('Backend connection error:', err);
+                document.getElementById('pipeline-status-text').innerHTML = `<span style="color:var(--danger);">Backend connection error: ${err.message}. Please ensure NetrAI backend is running.</span>`;
             }
         }
 
@@ -666,15 +704,14 @@
                 document.getElementById('pipeline-status-text').innerText = data.status;
             }
 
-            // Step 1: AnomalyCLIP Vision
+            // Stage 1: AnomalyCLIP Vision
             if (data.stage === 'anomaly_clip_start') {
                 activatePill(1);
             } else if (data.stage === 'anomaly_clip_done') {
                 markPillDone(1);
                 document.getElementById('badge-anomaly-score').innerText = `${Math.round(data.anomaly_score * 100)}% (${data.anomaly_type})`;
-            }
-
-            // Step 2: 3x3 Grid of Anomalous Frames (ACTUAL BACKEND IMAGE)
+            } 
+            // Stage 2: Real 3x3 Dynamic Grid from Video
             else if (data.stage === 'grid_3x3') {
                 activatePill(2);
                 markPillDone(2);
@@ -684,9 +721,8 @@
                     img.style.display = 'block';
                     document.getElementById('res-grid-placeholder').style.display = 'none';
                 }
-            }
-
-            // Step 3: Gemini Multimodal Reasoner
+            } 
+            // Stage 3: Gemini Multimodal Reasoner
             else if (data.stage === 'gemini_processing') {
                 activatePill(3);
             } else if (data.stage === 'gemini_done') {
@@ -696,9 +732,8 @@
                 document.getElementById('badge-severity').className = 'badge ' + (data.severity === 'high' ? 'badge-danger' : 'badge-warning');
                 document.getElementById('res-gesture-flag').innerText = data.distress_gesture ? 'YES (SOS Detected)' : 'No';
                 document.getElementById('res-gesture-flag').style.color = data.distress_gesture ? '#f87171' : '#34d399';
-            }
-
-            // Step 4: Relevant Departments Identified
+            } 
+            // Stage 4: Relevant Departments
             else if (data.stage === 'departments_identified') {
                 activatePill(4);
                 markPillDone(4);
@@ -709,9 +744,8 @@
                         <span class="badge badge-warning">${d.priority}</span>
                     </div>
                 `).join('');
-            }
-
-            // Step 5: Departments Called & Dispatched
+            } 
+            // Stage 5: Departments Called
             else if (data.stage === 'departments_called') {
                 activatePill(5);
                 markPillDone(5);
@@ -723,20 +757,36 @@
                     </div>
                 `).join('');
                 document.getElementById('badge-dispatch-count').innerText = `${data.dispatched_units.length} Dispatched`;
-            }
-
-            // Step 6: Final Output
-            else if (data.stage === 'final_output') {
+            } 
+            // Stage 6: Real YOLOv8 Crop & Re-ID Sighting
+            else if (data.stage === 'reid_processing') {
                 activatePill(6);
+                document.getElementById('res-reid-desc').innerText = 'Running YOLOv8 person crop & generating Qdrant embeddings...';
+            } else if (data.stage === 'reid_match') {
                 markPillDone(6);
+                document.getElementById('badge-reid-similarity').innerText = `${data.similarity} MATCH`;
+                document.getElementById('res-reid-camera').innerText = `Sighted: ${data.sighting_camera}`;
+                document.getElementById('res-reid-desc').innerText = `Cross-camera cosine similarity: ${data.similarity}`;
+                if (data.crop_url) {
+                    const cropImg = document.getElementById('res-reid-crop');
+                    cropImg.src = data.crop_url + '?t=' + Date.now();
+                    cropImg.style.display = 'block';
+                }
+            } 
+            // Stage 7: Final Output
+            else if (data.stage === 'final_output') {
+                activatePill(7);
+                markPillDone(7);
             }
         }
 
         // Automatic launch of Police Dashboard upon pipeline completion
         function onPipelineComplete() {
-            markPillDone(6);
+            markPillDone(7);
             document.getElementById('progress-bar-fill').style.width = '100%';
+            fetchTraces();
 
+            // Display launch banner
             const banner = document.getElementById('auto-launch-banner');
             banner.style.display = 'flex';
 
@@ -745,7 +795,7 @@
             const statusText = document.getElementById('pipeline-status-text');
 
             function updateText() {
-                const msg = `Pipeline processing completed! Incident dispatched to CTECC. Automatically launching Delhi Police Operations Center in ${secondsRemaining}s...`;
+                const msg = `Backend pipeline completed! Incident dispatched to CTECC. Automatically launching Delhi Police Operations Center in ${secondsRemaining}s...`;
                 subtext.innerText = msg;
                 statusText.innerHTML = `✅ <strong>${msg}</strong>`;
             }
@@ -779,7 +829,7 @@
         function resetPipelineUI() {
             document.getElementById('auto-launch-banner').style.display = 'none';
             document.getElementById('progress-bar-fill').style.width = '0%';
-            for (let i = 1; i <= 6; i++) {
+            for (let i = 1; i <= 7; i++) {
                 const pill = document.getElementById(`pill-step-${i}`);
                 if (pill) pill.className = 'step-pill';
             }
@@ -788,11 +838,9 @@
             document.getElementById('badge-anomaly-score').innerText = 'Evaluating...';
             document.getElementById('badge-severity').innerText = 'Waiting...';
             document.getElementById('res-vlm-report').innerText = 'Waiting for multimodal vision analysis...';
-            document.getElementById('badge-dispatch-count').innerText = 'Standby';
+            document.getElementById('res-reid-crop').style.display = 'none';
+            document.getElementById('badge-reid-similarity').innerText = 'Pending';
         }
-
-        setInterval(fetchTraces, 3000);
-        fetchTraces();
     </script>
 </body>
 </html>

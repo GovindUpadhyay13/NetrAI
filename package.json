@@ -1,0 +1,9 @@
+{
+  "name": "netrai-surveillance",
+  "version": "1.0.0",
+  "private": true,
+  "description": "NetrAI Surveillance Operations Center & Video Pipeline Studio",
+  "scripts": {
+    "build": "echo 'NetrAI static build ready'"
+  }
+}

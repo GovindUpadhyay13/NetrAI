@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Delhi Police NetrAI | Integrated Women's Safety Operations Center</title>
+  
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  
+  <!-- Leaflet CSS & JS for Delhi Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  
+  <!-- Dashboard Styling -->
+  <link rel="stylesheet" href="/dashboard/style.css" onerror="this.href='/style.css'" />
+</head>
+<body>
+
+  <!-- ================= LEFT SIDEBAR ================= -->
+  <aside class="sidebar">
+    <div>
+      <div class="brand-logo">
+        <div class="brand-badge">DP</div>
+        <span>NETRAI</span>
+      </div>
+
+      <ul class="nav-menu">
+        <li class="nav-item active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Dashboard
+        </li>
+        <li class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+          Live Map
+        </li>
+        <li class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          Events
+        </li>
+        <li class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          Video Analytics
+        </li>
+        <li class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+          Distress SOS
+        </li>
+        <li class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="7" r="4"></circle><path d="M5.5 21a8.38 8.38 0 0 1 13 0"></path></svg>
+          Re-ID Gallery
+        </li>
+        <li class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          Rules Engine
+        </li>
+        <li class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          Settings
+        </li>
+      </ul>
+    </div>
+
+    <div class="sidebar-footer">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+      <span>Police Station Hub</span>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN WRAPPER ================= -->
+  <div class="main-wrapper">
+
+    <!-- ================= TOP HEADER ================= -->
+    <header class="top-header">
+      <div class="header-left">
+        <!-- Location Pill -->
+        <div class="location-dropdown-pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          <span class="location-name">South Delhi</span>
+          <span class="status-indicator"><span class="status-dot"></span> Online</span>
+          <span style="color: var(--text-muted); font-size: 11px;">Update 20:32</span>
+          <span style="color: #cbd5e1;">☆</span>
+        </div>
+
+        <!-- Central Pill Tabs -->
+        <div class="header-tabs">
+          <button class="tab-btn active">Overview</button>
+          <button class="tab-btn">Device log</button>
+          <button class="tab-btn">Settings</button>
+          <a href="/" class="tab-btn" style="text-decoration:none; display:inline-flex; align-items:center; gap:5px; background:#eff6ff; color:#2563eb; font-weight:600; border:1px solid #bfdbfe;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            Video Pipeline Studio
+          </a>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <!-- Notification Bell -->
+        <div class="icon-button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+          <div class="badge-counter">2</div>
+        </div>
+
+        <!-- User Profile -->
+        <div class="user-profile">
+          <div class="user-avatar">AD</div>
+          <div class="user-info">
+            <div class="user-name">Admin_South_Delhi</div>
+            <div class="user-role">Delhi Police HQ &bull; South Dist.</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ================= CONTENT AREA ================= -->
+    <main class="content-area">
+
+      <!-- LEFT COLUMN: DELHI MAP -->
+      <section class="map-column">
+        <div class="map-filter-bar">
+          <div class="map-filter-group">
+            <span class="filter-label">Location</span>
+            <span class="filter-value" style="color: #2563eb;">● South Delhi</span>
+          </div>
+          <div class="map-filter-group" style="text-align: right;">
+            <span class="filter-label">Sublocation (Zone SD-08)</span>
+            <span class="filter-value" id="current-sublocation-label">Hauz Khas Village (CAM-SD-01) ▾</span>
+          </div>
+        </div>
+
+        <div class="map-container-card">
+          <div class="map-overlay-badge">
+            <span style="color: #ef4444; animation: pulse 1s infinite;">●</span> Cross-Camera Re-ID Pursuit Track [Active]
+          </div>
+          <div id="delhi-map"></div>
+
+          <!-- Cross-Camera Trajectory Overlay Bar for Cops -->
+          <div class="map-pursuit-widget">
+            <div class="pursuit-header">
+              <div class="pursuit-title">
+                <span class="step-number" style="width: 14px; height: 14px; font-size: 9px;">!</span>
+                <span>Suspect Cross-Camera Trajectory</span>
+              </div>
+              <span class="pursuit-pill-badge" id="pursuit-status-badge">3 NODES TRACKED</span>
+            </div>
+            <div class="pursuit-steps-row" id="pursuit-steps-list">
+              <div class="pursuit-step">
+                <span class="step-number">1</span>
+                <span>Hauz Khas (SOS Origin)</span>
+              </div>
+              <span class="pursuit-arrow">➔</span>
+              <div class="pursuit-step">
+                <span class="step-number" style="background: #f97316;">2</span>
+                <span>Deer Park Trail (Re-ID 99.8%)</span>
+              </div>
+              <span class="pursuit-arrow">➔</span>
+              <div class="pursuit-step active-step">
+                <span class="step-number" style="background: #dc2626;">3</span>
+                <span>Green Park North (Active Vector)</span>
+              </div>
+            </div>
+            <div class="pursuit-footer">
+              <span>🚨 Intercept: PCR Echo-14 deployed to Green Park Metro</span>
+              <button class="btn-track-focus" id="btn-focus-path">Focus Path</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT COLUMN: ANALYTICS & DISPATCH CARDS -->
+      <section class="metrics-column">
+
+        <!-- Header Filters -->
+        <div class="insights-header">
+          <h2 class="insights-title">Traffic & Safety Insights</h2>
+          <div class="filter-pills">
+            <div class="pill-select">▾ Last 3 Hours</div>
+            <div class="pill-select">▾ Southbound (Outer Ring)</div>
+            <button class="btn-refresh" id="btn-refresh-live">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+              <span>Rest Change</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ENLARGED ACCIDENT & ANOMALY DETECTED CARD (ABOVE CTECC) -->
+        <div class="incident-alert-card enlarged">
+          <div class="incident-alert-header">
+            <div class="alert-type-title">
+              <span class="incident-alert-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path></svg>
+              </span>
+              <span>Accident & Anomaly Detected</span>
+              <span class="badge-threat-high">CRITICAL ALERT</span>
+            </div>
+            
+            <div class="alert-header-right">
+              <div class="emergency-meter-wrap">
+                <span class="emergency-meter-label">Emergency Level</span>
+                <div class="emergency-meter">
+                  <div class="meter-bar active-high"></div>
+                  <div class="meter-bar active-high"></div>
+                  <div class="meter-bar active-high"></div>
+                  <div class="meter-bar active-high"></div>
+                  <div class="meter-bar active-med"></div>
+                </div>
+              </div>
+              <div class="incident-event-id-tag" id="incident-event-id">Event ID: 955D1D1C</div>
+            </div>
+          </div>
+
+          <div class="incident-body-split enlarged-grid">
+            <!-- Col 1: Gemini Multimodal VLM Live Reasoning -->
+            <div class="vlm-analysis-box">
+              <div class="vlm-box-header">
+                <span class="vlm-sparkle-icon">✨</span>
+                <strong>Gemini 2.5 Flash Multimodal Incident Reasoning</strong>
+                <span class="vlm-live-pulse">LIVE REASONING</span>
+              </div>
+              <div class="incident-vlm-text enlarged-vlm-text" id="live-vlm-report">
+                Subject observed raising both arms repeatedly in sustained SOS distress gesture pattern along Hauz Khas Lake perimeter trail. Trailing individual detected approaching from south corridor. Precautionary PCR patrol dispatch initiated. Cross-camera Re-ID confirmed subject progressing towards Green Park corridor.
+              </div>
+              <div class="vlm-model-tags">
+                <span class="model-pill">MediaPipe Pose: 98.2%</span>
+                <span class="model-pill">AnomalyCLIP: 94.8%</span>
+                <span class="model-pill">Qdrant Re-ID: 99.8%</span>
+              </div>
+            </div>
+
+            <!-- Col 2: Telemetry & Detection Parameters -->
+            <div class="telemetry-card-col">
+              <div class="col-section-title">Detection Telemetry</div>
+              <ul class="incident-checklist">
+                <li class="checklist-item">
+                  <span>Distress Flagged:</span>
+                  <strong style="color: #ef4444;" id="chk-sos-flag">Yes (Distress SOS)</strong>
+                </li>
+                <li class="checklist-item">
+                  <span>Anomaly Type:</span>
+                  <strong id="chk-anomaly-type">Harassment / Trailing</strong>
+                </li>
+                <li class="checklist-item">
+                  <span>Primary Camera:</span>
+                  <strong>CAM-SD-01 (Hauz Khas)</strong>
+                </li>
+                <li class="checklist-item">
+                  <span>Confidence:</span>
+                  <strong id="chk-score">99.8%</strong>
+                </li>
+                <li class="checklist-item">
+                  <span>Weather Condition:</span>
+                  <strong>Clear / Night Vision</strong>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Col 3: Cross-Camera Pursuit & Response -->
+            <div class="pursuit-card-col">
+              <div class="col-section-title">Cross-Camera Pursuit Track</div>
+              <ul class="incident-checklist">
+                <li class="checklist-item">
+                  <span>Cross-Cam Track:</span>
+                  <strong style="color: #ef4444;" id="chk-cross-cam-path">3 Cameras Sighted</strong>
+                </li>
+                <li class="checklist-item">
+                  <span>Active Position:</span>
+                  <strong style="color: #ea580c;">CAM-SD-04 (Green Park)</strong>
+                </li>
+                <li class="checklist-item">
+                  <span>Target Escape Vector:</span>
+                  <strong style="color: #2563eb;">Green Park Metro Rd</strong>
+                </li>
+                <li class="checklist-item">
+                  <span>PCR Intercept Unit:</span>
+                  <strong style="color: #16a34a;">Echo-14 (ETA 1.5m)</strong>
+                </li>
+                <li class="checklist-item">
+                  <span>Station Cordon:</span>
+                  <strong style="color: #16a34a;">Active (Gate #2)</strong>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- DELHI POLICE COMMAND & CTECC (BELOW ANOMALY DETECTED) -->
+        <div class="dispatch-matrix-card full-width">
+          <div class="matrix-header">
+            <span class="matrix-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path></svg>
+              DELHI POLICE COMMAND & CTECC INTER-AGENCY COORDINATION
+            </span>
+            <span style="font-size: 11px; color: var(--text-muted);">Event ID: 955D1D1C &bull; Zone SD-08</span>
+          </div>
+
+          <div class="matrix-split-grid">
+            <!-- Left 3 Units: Police & Tactical Response -->
+            <table class="matrix-table">
+              <tbody>
+                <tr>
+                  <td><strong>South Delhi PCR Patrol Vans</strong><br><span style="font-size: 10px; color: var(--text-muted);">Unit Echo-14, Echo-08</span></td>
+                  <td style="text-align: right;"><span class="badge-status badge-dispatched">Dispatched</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Women Safety Escort Unit</strong><br><span style="font-size: 10px; color: var(--text-muted);">Veera Patrol Team South</span></td>
+                  <td style="text-align: right;"><span class="badge-status badge-dispatched">Dispatched</span></td>
+                </tr>
+                <tr>
+                  <td><strong>112 ERSS Central Control Room</strong><br><span style="font-size: 10px; color: var(--text-muted);">South District Dispatch Desk</span></td>
+                  <td style="text-align: right;"><span class="badge-status badge-notified">Notified</span></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- Right 3 Units: Emergency Medical & City Infrastructure -->
+            <table class="matrix-table">
+              <tbody>
+                <tr>
+                  <td><strong>Medical / CATS Ambulance</strong><br><span style="font-size: 10px; color: var(--text-muted);">AIIMS Trauma Response</span></td>
+                  <td style="text-align: right;"><span class="badge-status badge-progress">In Progress</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Delhi Fire & Rescue Services</strong><br><span style="font-size: 10px; color: var(--text-muted);">Bhikaji Cama Place Station</span></td>
+                  <td style="text-align: right;"><span class="badge-status badge-notified">Notified</span></td>
+                </tr>
+                <tr>
+                  <td><strong>V2X & City Traffic Signal Preemption</strong><br><span style="font-size: 10px; color: var(--text-muted);">Green Wave on Outer Ring Rd</span></td>
+                  <td style="text-align: right;"><span class="badge-status badge-triggered">Triggered</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Bottom Key Metrics Bar -->
+        <div class="bottom-metrics-row">
+          <div class="small-metric-card">
+            <div class="small-metric-icon">📹</div>
+            <div>
+              <div class="small-metric-label">Camera Connect</div>
+              <div class="small-metric-value">351 <span style="font-size: 11px; color: var(--text-muted);">/ 351</span></div>
+            </div>
+          </div>
+          <div class="small-metric-card">
+            <div class="small-metric-icon">📡</div>
+            <div>
+              <div class="small-metric-label">V2X Connect</div>
+              <div class="small-metric-value">43 <span style="font-size: 11px; color: var(--text-muted);">/ 43</span></div>
+            </div>
+          </div>
+          <div class="small-metric-card">
+            <div class="small-metric-icon">⚡</div>
+            <div>
+              <div class="small-metric-label">Signal Flash</div>
+              <div class="small-metric-value">5 <span style="font-size: 11px; color: var(--text-muted);">/ 24 Hrs</span></div>
+            </div>
+          </div>
+          <div class="small-metric-card">
+            <div class="small-metric-icon">👥</div>
+            <div>
+              <div class="small-metric-label">Re-ID Matches</div>
+              <div class="small-metric-value" id="stat-reid-matches" style="color: var(--accent-purple);">12 Matches</div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- Dashboard JavaScript -->
+  <script src="/dashboard/app.js" onerror="this.src='/app.js'"></script>
+</body>
+</html>
