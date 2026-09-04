@@ -46,9 +46,10 @@ async function initDelhiMap() {
     }, null, { position: 'bottomright' }).addTo(map);
 
 
+    try {
         let res = await fetch('/dashboard/delhi_cams.json').catch(() => null);
         if (!res || !res.ok) res = await fetch('delhi_cams.json');
-        camerasData = await res.json();
+        if (res && res.ok) camerasData = await res.json();
     } catch (e) {
         camerasData = [
             { id: "CAM-SD-01", name: "Hauz Khas Village - Main Gate", lat: 28.5535, lng: 77.1945, threat_level: "high", last_anomaly: "Distress SOS Signaling" },
